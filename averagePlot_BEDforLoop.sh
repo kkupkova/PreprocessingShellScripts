@@ -28,7 +28,7 @@ for bedFile in "$bedFolder"/*.bed
   
   #create the two folders 
   folderScale="${folder}_scaleRegions2000bpSurround"
-  folderReference="${folder}_referencePoint"
+  folderReference="${folder}_referencePoint_10kbSurround"
   mkdir $folderScale
   mkdir $folderReference
   

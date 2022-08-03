@@ -1,10 +1,10 @@
 #!/bin/bash
 # Goes through fastq files in a folder
-# 1) map to human 
-# 2) select the unmapped sequences - non-human stay 
+# 1) map to yeast
+# 2) select the unmapped sequences - non-yeast stay 
 # 3) convert to fastq (the final fastq will have suffix corresponding to variable $nonHuman)
 
-nonHuman='_nonHuman'
+nonHuman='_nonYeast'
 for i in *.fastq;
  do 
  	# ID= everything before "."
@@ -12,7 +12,7 @@ for i in *.fastq;
  	echo $id.bam
  	
  	#map the FASTQ file to the human genome
- 	bowtie2 -x /Users/lilcrusher/bowtie2-2.2.6/indexes/hg19/hg19  -p 6 --time -U $i | samtools view -S -b - > $id.bam
+ 	bowtie2 -x /Users/lilcrusher/bowtie2-2.2.6/indexes/sacCer3/sacCer3  -p 6 --time -U $i | samtools view -S -b - > $id.bam
  	
  	# filter out the reads mapped to the human = only unmapped stay
  	samtools view -b -f 4 $id.bam > $id$nonHuman.bam
@@ -21,36 +21,4 @@ for i in *.fastq;
  	bedtools bamtofastq -i $id$nonHuman.bam -fq $id$nonHuman.fastq
  		
 done
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

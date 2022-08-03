@@ -1,9 +1,9 @@
 #!/bin/bash
-#the scrip goes through the BAM files 
+#the scrip goes through the FASTQ files 
 #make directory for fastqc results
 mkdir fastqc_results
 
-#go through BAM files
+#go through FASTQ files
 for i in ./*.fastq; do
 
 id="$( cut -d '.' -f 2 <<< "$i" )"

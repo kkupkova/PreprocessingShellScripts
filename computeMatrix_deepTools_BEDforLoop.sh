@@ -1,15 +1,14 @@
  #!/bin/bash
 
 # Script for getting coverage values at certain regions :
-# run from a folder with bigWig regions to be mapped - the output folders will be 
-# created within this folder
 # inputs are: BED file with desired regions and bigWig files to be plotted onto it
 # there are two modes of plotting - 
 #                    1: regions are scaled to same size, 
 #                    2: center of regions are taken and +- 10 kb on both sides (arguments a, b)
 # 1) drag a folder with the bed files to a console
-# 2) creates a folder for each BED file: 
-#                    name_referencePoint 
+# 2) creates 2 folders for each BED file: 2 modes of mapping- 
+#                    1:name_scaleRegions, 
+#                    2: name_referencePoint .... for the results of the two modes accordingly
 # 3) goes through the bigWig files - runs computeMatrix - arguments explained within a loop
 
 # go through all the BED files within the folder and map the bigWig files onto
@@ -28,8 +27,8 @@ for bedFile in "$bedFolder"/*.bed
   folder="${filename%.*}"
   
   #create the two folders 
-  folderReference="${folder}_referencePoint_2kb"
-  mkdir $folderReference
+  folderScale="${folder}_scaleRegions2000bpSurround"
+  mkdir $folderScale
   
 	# go through the bigWig files and map them agains the BED file
 	for i in *.bw
@@ -42,10 +41,9 @@ for bedFile in "$bedFolder"/*.bed
 		gzOutput="${id}.gz"
 		matrixOutput="${id}.tab"
 		regionsOutput="${id}.bed"
-
 	
-	#  #### run reference-point mode ###
-	#  	computeMatrix reference-point \ #option with the scaled regions
+	#  	1) run scale-regions mode
+	#  	computeMatrix scale-regions \ #option with the scaled regions
 	#  	-S $i \ #input is the bigWig file
 	#  	-R $bedFile \ #BED file that bigWig is mapped on
 	#  	-o $gzOutput \ # output name - used for plotMatrix
@@ -53,13 +51,11 @@ for bedFile in "$bedFolder"/*.bed
 	#  	--outFileSortedRegions $regionsOutput \ #bed regions without zeros
 	#  	--sortRegions descent \ #sort regions for heatmap
 	#  	--sortUsing mean \ # use mean value to sort regions
-	#  	-p "max/2" \ # use maximum number of processors /2
-	#  	--referencePoint center \ # reference is the center of the region
-	#  	-b 2000 \ # 2kb upstream from reference
-	#  	-a 2000 # 2 kb downstream from reference
+	#  	-p "max/2" # use maximum number of processors /2
+	#   -b 2000 /
+	#   -a 2000 # add +- 2 kb behind
 	
-
-		computeMatrix reference-point \
+		computeMatrix scale-regions \
 		-S $i \
 		-R $bedFile \
 		-o $gzOutput \
@@ -67,17 +63,22 @@ for bedFile in "$bedFolder"/*.bed
 		--outFileSortedRegions $regionsOutput \
 		--sortRegions descend \
 		--sortUsing mean \
+		--missingDataAsZero \
+		--smartLabels \
 		-p "max/2" \
-		--referencePoint center \
 		-b 2000 \
 		-a 2000
 	
 		# move results to designated folder
-		mv $gzOutput $folderReference
-		mv $matrixOutput $folderReference
-		mv $regionsOutput $folderReference
+		mv $gzOutput $folderScale
+		mv $matrixOutput $folderScale
+		mv $regionsOutput $folderScale
+	
+	
 	done
 done
+
+
 
 
 
