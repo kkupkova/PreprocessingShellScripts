@@ -1,0 +1,5 @@
+
+*.bed
+.DS_Store
+R_scripts/ERCC_count_table/gene_count_matrix.csv
+*.gtf
